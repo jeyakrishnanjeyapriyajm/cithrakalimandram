@@ -1,6 +1,9 @@
 import { useEffect, useLayoutEffect, useRef } from "react";
 import { ArrowDown, ArrowUpRight, Play } from "lucide-react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const HERO_IMAGE =
   "https://img1.wsimg.com/isteam/ip/64c5a7d9-77e1-4681-b879-053094daf4ba/rax%20arangetram.jpg";
@@ -88,6 +91,57 @@ export default function Hero() {
           },
           "-=0.4",
         );
+
+      // Scroll-linked cinematic transition inspired by the Nataraja story.
+      // The hero content fades upward as the background slowly zooms in.
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: 1,
+            invalidateOnRefresh: true,
+          },
+        })
+        .to(
+          ".hero-background",
+          {
+            scale: 1.3,
+            yPercent: 10,
+            filter: "brightness(0.45) blur(5px)",
+            ease: "none",
+          },
+          0,
+        )
+        .to(
+          ".hero-content",
+          {
+            y: -120,
+            opacity: 0,
+            ease: "none",
+          },
+          0,
+        )
+        .to(
+          ".hero-ornament",
+          {
+            rotation: 25,
+            scale: 1.15,
+            opacity: 0.4,
+            ease: "none",
+          },
+          0,
+        )
+        .to(
+          ".hero-scroll-light",
+          {
+            opacity: 0,
+            scale: 1.5,
+            ease: "none",
+          },
+          0,
+        );
     }, sectionRef);
 
     return () => context.revert();
@@ -147,7 +201,7 @@ export default function Hero() {
       {/* Mouse-following light */}
       <div
         ref={lightRef}
-        className="pointer-events-none absolute left-0 top-0 z-[2] hidden h-[350px] w-[350px] rounded-full bg-[#d1ad65]/10 blur-[100px] lg:block"
+        className="hero-scroll-light pointer-events-none absolute left-0 top-0 z-[2] hidden h-[350px] w-[350px] rounded-full bg-[#d1ad65]/10 blur-[100px] lg:block"
       />
 
       {/* Background decorative circle */}
@@ -177,7 +231,7 @@ export default function Hero() {
       <div className="noise-overlay z-[3]" />
 
       {/* Main content */}
-      <div className="relative z-10 mx-auto w-full max-w-[1450px] px-5 pb-12 pt-36 sm:pb-16 md:pb-20 lg:px-10 lg:pb-20">
+      <div className="hero-content relative z-10 mx-auto w-full max-w-[1450px] px-5 pb-12 pt-36 sm:pb-16 md:pb-20 lg:px-10 lg:pb-20">
         <div className="grid items-end gap-12 lg:grid-cols-[1fr_250px]">
           <div>
             <div className="hero-small-label mb-6 flex items-center gap-4">
